@@ -5,7 +5,7 @@ export interface APIRes {
   message: string;
 }
 
-export interface ResponseSuccess<T> extends APIRes {
+export interface ResponseSuccess<T = undefined> extends APIRes {
   data: T;
 }
 

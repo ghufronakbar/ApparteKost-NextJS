@@ -93,11 +93,11 @@ const RegisterPage = () => {
               onChange={(e) => onChange("email", e)}
             />
             <input
-              type="text"
+              type="number"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               placeholder="Nomor Telepon"
               value={form.phone}
-              onChange={(e) => onChange("phone", e)}
+              onChange={(e) => onChange("phone", e)}              
             />
             <textarea
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -168,7 +168,7 @@ const RegisterPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-primary text-white font-semibold rounded-lg hover:bg-red-600 transition duration-300"
+              className="w-full py-2 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition duration-300"
               disabled={isLoading}
             >
               Register

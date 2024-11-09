@@ -73,10 +73,11 @@ const LoginPage = () => {
             </div>
             <div className="flex items-center">
               <input type="checkbox" id="rememberMe" className="mr-2" />
+              <label htmlFor="rememberMe" className="text-sm">Ingat Saya</label>
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-primary text-white font-semibold rounded-lg hover:bg-red-600 transition duration-300"
+              className="w-full py-2 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition duration-300"
             >
               Login
             </button>

@@ -1,5 +1,5 @@
-import { toaster } from "@/components/ui/toaster";
 import axiosInstance from "@/config/axiosInstance";
+import { ACCESS_TOKEN } from "@/constant";
 import { toastError, toastLoading, toastSuccess } from "@/helper/toast";
 import { LoginRes } from "@/models/Account";
 import { ResponseFail, ResponseSuccess } from "@/models/Response";
@@ -29,7 +29,7 @@ export const login = async (
       "/auth/login",
       form
     );
-    Cookies.set("token", data.data.accessToken);
+    Cookies.set(ACCESS_TOKEN, data.data.accessToken);
     toastSuccess(data.message);
     if (data.data.role === "ADMIN") {
       router.push("/admin");
@@ -55,8 +55,8 @@ export interface FormRegisterBoarding {
   subdistrict: string;
   location: string;
   panoramaPicture: string;
-  maxCapacity: number;
-  price: number;
+  maxCapacity?: number;
+  price?: number;
 }
 
 export const initFormRegisterBoarding: FormRegisterBoarding = {
@@ -69,8 +69,8 @@ export const initFormRegisterBoarding: FormRegisterBoarding = {
   subdistrict: "",
   location: "",
   panoramaPicture: "",
-  maxCapacity: 0,
-  price: 0,
+  maxCapacity: undefined,
+  price: undefined,
 };
 
 export const registerBoarding = async (
@@ -83,19 +83,35 @@ export const registerBoarding = async (
   if (isLoading) return;
   if (!form.phone.startsWith("62")) {
     toastError("Nomor telepon harus dimulai dengan 62");
-    return
+    return;
+  }
+  if (form.maxCapacity === undefined || form.price === undefined) {
+    toastError("Kapasistas dan biaya harus diisi");
+    return;
+  }
+  if (pictures.length === 0) {
+    toastError("Foto harus diisi");
+    return;
   }
   try {
     const formData = new FormData();
-    Object.keys(form).forEach((key) => {
-      formData.append(key, form[key as keyof FormRegisterBoarding].toString());
-    });
+    if (form) {
+      Object.keys(form).forEach((key) => {
+        formData.append(
+          key,
+          form[key as keyof FormRegisterBoarding]?.toString() ?? ""
+        );
+      });
+    }
     pictures.forEach((picture, index) => {
       formData.append(`pictures`, picture, `picture_${index}`);
     });
     toastLoading();
-    await axiosInstance.post("/auth/register-boarding", formData);
-    toastSuccess("Register boarding success");
+    const { data } = await axiosInstance.post<ResponseSuccess>(
+      "/auth/register-boarding",
+      formData
+    );
+    toastSuccess(data.message);
     router.push("/login");
   } catch (error) {
     console.log(error);

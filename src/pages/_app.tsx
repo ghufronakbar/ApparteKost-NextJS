@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider themes={["light"]}>
       <Theme appearance="light">
-        <Component {...pageProps} />;
+        <Component {...pageProps} />
         <Toaster />
       </Theme>
     </Provider>
