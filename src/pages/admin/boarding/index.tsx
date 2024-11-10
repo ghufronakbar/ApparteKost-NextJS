@@ -1,5 +1,5 @@
 import SearchInput from "@/components/SearchInput";
-import SidebarAdmin from "@/components/SidebarAdmin";
+import NavAdmin from "@/components/NavAdmin";
 import { DEFAULT_IMAGE } from "@/constant";
 import statusText from "@/helper/statusText";
 import { BoardingHouse } from "@/models/Boarding";
@@ -40,7 +40,7 @@ const BoardingPage = () => {
   }, []);
   return (
     <div className="w-full h-full min-h-screen bg-gray-50 flex">
-      <SidebarAdmin />
+      <NavAdmin />
       <div className="w-full h-full flex flex-col gap-8 px-8 md:px-24 py-24 md:py-12">
         <div className="w-full flex items-center justify-between">
           <h2 className="text-4xl font-bold">Daftar Kos</h2>

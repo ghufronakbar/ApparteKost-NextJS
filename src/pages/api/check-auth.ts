@@ -14,7 +14,6 @@ export default function handler(
 ) {
   try {
     const { auth } = req.query as { auth: string };
-    console.log({ auth });
     if (!auth) {
       return res.status(401).json({ status: 401, message: "Unauthorized" });
     }

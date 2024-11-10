@@ -1,44 +1,28 @@
-import SearchInput from "@/components/SearchInput";
-import NavAdmin from "@/components/NavAdmin";
 import { DEFAULT_IMAGE, DEFAULT_PROFILE } from "@/constant";
 import formatPhone from "@/helper/formatPhone";
 import formatRupiah from "@/helper/formatRupiah";
-import statusText from "@/helper/statusText";
 import { BoardingHouse } from "@/models/Boarding";
 import {
   confirmBoarding,
-  getAllBoardings,
   getBoardingById,
   uploadPanorama,
 } from "@/services/boarding";
-import AdminAuthPage from "@/utils/AdminAuthPage";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
+import BoardingAuthPage from "@/utils/BoardingAuthPage";
+import NavBoarding from "@/components/NavBoarding";
 
-const FIELDS = [
-  "No",
-  "",
-  "Nama Kos",
-  "Pemilik",
-  "Alamat",
-  "Rating",
-  "Status",
-  "",
-];
-
-const BoardingPage = () => {
+const ProfilePage = () => {
   const [data, setData] = useState<BoardingHouse>();
   const [image, setImage] = useState<string>(DEFAULT_IMAGE);
   const [panoramaPicture, setPanoramaPicture] = useState<File>();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { id } = router.query as { id: string };
 
   const fetchData = async () => {
-    const res = await getBoardingById(id, router, "admin");
+    const res = await getBoardingById("id", router, "boarding");
     if (res) {
       setData(res);
       res.pictures &&
@@ -58,7 +42,7 @@ const BoardingPage = () => {
     if (router.isReady) {
       fetchData();
     }
-  }, [id, router]);
+  }, [router]);
 
   const handlePictureChange = (picture: string) => setImage(picture);
 
@@ -77,7 +61,7 @@ const BoardingPage = () => {
 
   const handleConfirm = async (isConfirmed: boolean) => {
     await confirmBoarding(
-      id,
+      "id",
       isConfirmed,
       loading,
       setLoading,
@@ -87,7 +71,7 @@ const BoardingPage = () => {
 
   return (
     <div className="w-full h-full min-h-screen bg-gray-50 flex">
-      <NavAdmin />
+      <NavBoarding />
       <div className="w-full h-full flex flex-col gap-8 px-8 md:px-24 py-24 md:py-12">
         <div className="w-full flex items-center justify-between">
           <h2 className="text-4xl font-bold">{data?.name}</h2>
@@ -146,7 +130,7 @@ const BoardingPage = () => {
                     onChange={handlePanoramaChange}
                   />
                   <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
                     onClick={handleSelectPanorama}
                   >
                     Pilih Gambar
@@ -163,7 +147,7 @@ const BoardingPage = () => {
                         className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                         onClick={() =>
                           uploadPanorama(
-                            id,
+                            "id",
                             panoramaPicture,
                             loading,
                             setLoading,
@@ -229,7 +213,18 @@ const BoardingPage = () => {
                     <th className="px-6 py-3 font-bold  min-w-[150px]">
                       Status
                     </th>
-                    <td className="px-6 py-3">{data && statusText(data)}</td>
+                    <td className="px-6 py-3">
+                      {data?.isActive !== undefined && (
+                        <select>
+                          <option value={data?.isActive ? 1 : 0}>
+                            {data?.isActive ? "Aktif" : "Tidak Aktif"}
+                          </option>
+                          <option value={data?.isActive ? 0 : 1}>
+                            {data?.isActive ? "Tidak Aktif" : "Aktif"}
+                          </option>
+                        </select>
+                      )}
+                    </td>
                   </tr>
                   <tr className="border-b">
                     <th className="px-6 py-3 font-bold  min-w-[150px]">
@@ -275,41 +270,12 @@ const BoardingPage = () => {
                 </thead>
               </table>
               <div className="flex flex-row gap-2 mt-4 mx-auto w-full items-center justify-center">
-                {data?.isPending && (
-                  <>
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md text-md"
-                      onClick={() => handleConfirm(true)}
-                    >
-                      Konfirmasi
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded-md text-md"
-                      onClick={() => handleConfirm(false)}
-                    >
-                      Tangguhkan
-                    </button>
-                  </>
-                )}
-                {!data?.isPending && (
-                  <>
-                    {!data?.isConfirmed ? (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md text-md"
-                        onClick={() => handleConfirm(true)}
-                      >
-                        Konfirmasi
-                      </button>
-                    ) : (
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 rounded-md text-md"
-                        onClick={() => handleConfirm(false)}
-                      >
-                        Tangguhkan
-                      </button>
-                    )}
-                  </>
-                )}
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md text-md"
+                  onClick={() => router.push("/boarding/profile/edit")}
+                >
+                  Edit
+                </button>
               </div>
             </div>
           </div>
@@ -319,4 +285,4 @@ const BoardingPage = () => {
   );
 };
 
-export default AdminAuthPage(BoardingPage);
+export default BoardingAuthPage(ProfilePage);

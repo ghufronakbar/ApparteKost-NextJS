@@ -96,3 +96,55 @@ export const uploadPanorama = async (
     setLoading(false);
   }
 };
+
+export const uploadOwnerPicture = async (
+  file: File,
+  loading: boolean,
+  setLoading: (loading: boolean) => void,
+  afterSuccess?: () => void
+) => {
+  if (loading) return;
+  toastLoading();
+  const formData = new FormData();
+  formData.append("ownerPicture", file);
+  try {
+    setLoading(true);
+    const { data } = await axiosInstance.patch<ResponseSuccess<BoardingHouse>>(
+      `/boardings/owner/picture`,
+      formData
+    );
+    toastSuccess(data.message);
+    afterSuccess?.();
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    const err = error as ResponseFail;
+    toastError(err.response?.data.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+export const editBoarding = async (
+  item: BoardingHouse,
+  isLoading: boolean,
+  setIsLoading: (isLoading: boolean) => void  
+) => {
+  if (isLoading) return;
+  toastLoading();
+  try {
+    setIsLoading(true);
+    const { data } = await axiosInstance.put<ResponseSuccess<BoardingHouse>>(
+      `/boardings/${item.boardingHouseId}`,
+      item
+    );
+    toastSuccess(data.message);
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    const err = error as ResponseFail;
+    toastError(err.response?.data.message);
+  } finally {
+    setIsLoading(false);
+  }
+};

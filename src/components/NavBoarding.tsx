@@ -1,19 +1,35 @@
 import Link from "next/link";
 import { useState } from "react";
-import {
-  HiChartPie,
-  HiViewBoards,
-  HiLogout,
-  HiMenu,
-  HiX,
-} from "react-icons/hi";
+import { HiChartPie, HiLogout, HiMenu, HiX } from "react-icons/hi";
 import Cookies from "js-cookie";
 import { ACCESS_TOKEN } from "@/constant";
+import { TbTransactionDollar } from "react-icons/tb";
+import {
+  MdBarChart,
+  MdLogout,
+  MdMoney,
+  MdOutlineManageHistory,
+  MdPerson,
+} from "react-icons/md";
 
 const LIST_MENU = [
-  { href: "/admin", icon: HiChartPie, label: "Dashboard" },
-  { href: "/admin/boarding", icon: HiViewBoards, label: "Daftar Kos" },
-  { href: "/login", icon: HiLogout, label: "Log Out" },
+  { href: "/boarding", icon: MdBarChart, label: "Dashboard" },
+  {
+    href: "/boarding/profile",
+    icon: MdPerson,
+    label: "Pengaturan Profil Kos",
+  },
+  {
+    href: "/boarding/transaction",
+    icon: MdMoney,
+    label: "Riwayat Transaksi",
+  },
+  {
+    href: "/boarding/manage",
+    icon: MdOutlineManageHistory,
+    label: "Kelola Kamar Aktif",
+  },
+  { href: "/login", icon: MdLogout, label: "Log Out" },
 ];
 
 interface NavDesktopProps {
@@ -105,7 +121,7 @@ const NavMobile = ({ handleLogout }: { handleLogout: () => void }) => {
   );
 };
 
-const SidebarAdmin = () => {
+const NavBoarding = () => {
   const [isOpen, setIsOpen] = useState(false);
   const handleLogout = () => {
     Cookies.remove(ACCESS_TOKEN);
@@ -123,4 +139,4 @@ const SidebarAdmin = () => {
   );
 };
 
-export default SidebarAdmin;
+export default NavBoarding;
