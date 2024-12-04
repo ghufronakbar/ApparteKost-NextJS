@@ -25,6 +25,7 @@ export interface BoardingHouse {
   pictures: Picture[];
   reviews: Review[];
   averageRating: number;
+  dashboard: BoardingDashboard;
 }
 
 export interface Picture {
@@ -40,3 +41,31 @@ export interface Review {
   comment: string | null;
   createdAt: string;
 }
+
+export interface BoardingDashboard {
+  totalTransactions: number;
+  totalRooms: number;
+  totalFilledRooms: number;
+  totalFreeRooms: number;
+}
+
+export const initBoardingDashboard: BoardingDashboard = {
+  totalTransactions: 0,
+  totalRooms: 0,
+  totalFilledRooms: 0,
+  totalFreeRooms: 0,
+};
+
+export type AdminDashboard = {
+  totalUsers: number;
+  totalBoardingHouses: number;
+  totalActiveBoardingHouses: number;
+  totalPendingBoardingHouses: number;
+};
+
+export const initAdminDashboard: AdminDashboard = {
+  totalUsers: 0,
+  totalBoardingHouses: 0,
+  totalActiveBoardingHouses: 0,
+  totalPendingBoardingHouses: 0,
+};

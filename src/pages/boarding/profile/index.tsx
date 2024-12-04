@@ -5,6 +5,7 @@ import { BoardingHouse } from "@/models/Boarding";
 import {
   confirmBoarding,
   getBoardingById,
+  setActiveBoarding,
   uploadPanorama,
 } from "@/services/boarding";
 import Image from "next/image";
@@ -27,7 +28,7 @@ const ProfilePage = () => {
       setData(res);
       res.pictures &&
         res.pictures.length > 0 &&
-        setImage(res.pictures[0].picture);
+        setImage(res.pictures?.[0]?.picture);
     }
   };
 
@@ -59,14 +60,8 @@ const ProfilePage = () => {
     }
   };
 
-  const handleConfirm = async (isConfirmed: boolean) => {
-    await confirmBoarding(
-      "id",
-      isConfirmed,
-      loading,
-      setLoading,
-      onSuccessConfirm
-    );
+  const handleSetActive = async () => {
+    await setActiveBoarding("id", loading, setLoading, onSuccessConfirm);
   };
 
   return (
@@ -215,7 +210,7 @@ const ProfilePage = () => {
                     </th>
                     <td className="px-6 py-3">
                       {data?.isActive !== undefined && (
-                        <select>
+                        <select onChange={handleSetActive} disabled={loading}>
                           <option value={data?.isActive ? 1 : 0}>
                             {data?.isActive ? "Aktif" : "Tidak Aktif"}
                           </option>

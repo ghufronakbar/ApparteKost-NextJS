@@ -1,5 +1,8 @@
 import NavAdmin from "@/components/NavAdmin";
+import { AdminDashboard, initAdminDashboard } from "@/models/Boarding";
+import { getAdminDashboard } from "@/services/boarding";
 import AdminAuthPage from "@/utils/AdminAuthPage";
+import { useEffect, useState } from "react";
 import {
   FaUsers,
   FaHome,
@@ -8,6 +11,20 @@ import {
 } from "react-icons/fa";
 
 const DashboardAdminPage = () => {
+  const [data, setData] = useState<AdminDashboard>(initAdminDashboard);
+  const fetchData = async () => {
+    try {
+      const res = await getAdminDashboard();
+      res && setData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="w-full h-full min-h-screen bg-gray-50 flex">
       <NavAdmin />
@@ -17,22 +34,26 @@ const DashboardAdminPage = () => {
           <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg">
             <FaUsers className="text-blue-500 text-4xl mb-3" />
             <h3 className="text-xl font-semibold">Total Pengguna</h3>
-            <p className="text-2xl font-bold">1,234</p>
+            <p className="text-2xl font-bold">{data?.totalUsers}</p>
           </div>
           <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg">
             <FaHome className="text-green-500 text-4xl mb-3" />
             <h3 className="text-xl font-semibold">Total Kos Terdaftar</h3>
-            <p className="text-2xl font-bold">567</p>
+            <p className="text-2xl font-bold">{data?.totalBoardingHouses}</p>
           </div>
           <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg">
             <FaCheckCircle className="text-yellow-500 text-4xl mb-3" />
             <h3 className="text-xl font-semibold">Total Kos Aktif</h3>
-            <p className="text-2xl font-bold">345</p>
+            <p className="text-2xl font-bold">
+              {data?.totalActiveBoardingHouses}
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg">
             <FaClipboardList className="text-red-500 text-4xl mb-3" />
             <h3 className="text-xl font-semibold">Total Permintaan Akun Kos</h3>
-            <p className="text-2xl font-bold">89</p>
+            <p className="text-2xl font-bold">
+              {data?.totalPendingBoardingHouses}
+            </p>
           </div>
         </div>
       </div>

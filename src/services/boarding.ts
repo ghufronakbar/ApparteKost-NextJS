@@ -2,7 +2,7 @@ import axiosInstance from "@/config/axiosInstance";
 import { ACCESS_TOKEN } from "@/constant";
 import { toastError, toastLoading, toastSuccess } from "@/helper/toast";
 import { LoginRes } from "@/models/Account";
-import { BoardingHouse } from "@/models/Boarding";
+import { AdminDashboard, BoardingHouse } from "@/models/Boarding";
 import { ResponseFail, ResponseSuccess } from "@/models/Response";
 import Cookies from "js-cookie";
 import { NextRouter } from "next/router";
@@ -18,6 +18,19 @@ export const getAllBoardings = async () => {
     const err = error as ResponseFail;
     toastError(err.response?.data.message);
     return [];
+  }
+};
+
+export const getAdminDashboard = async () => {
+  try {
+    const { data } = await axiosInstance.get<ResponseSuccess<AdminDashboard>>(
+      "/boardings/dashboard"
+    );
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    const err = error as ResponseFail;
+    toastError(err.response?.data.message);
   }
 };
 
@@ -55,6 +68,31 @@ export const confirmBoarding = async (
       {
         isConfirmed,
       }
+    );
+    toastSuccess(data.message);
+    afterSuccess?.();
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    const err = error as ResponseFail;
+    toastError(err.response?.data.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+export const setActiveBoarding = async (
+  id: string,
+  loading: boolean,
+  setLoading: (loading: boolean) => void,
+  afterSuccess?: () => void
+) => {
+  if (loading) return;
+  try {
+    setLoading(true);
+    toastLoading();
+    const { data } = await axiosInstance.patch<ResponseSuccess<BoardingHouse>>(
+      `/boardings/${id}/active`
     );
     toastSuccess(data.message);
     afterSuccess?.();
@@ -128,7 +166,7 @@ export const uploadOwnerPicture = async (
 export const editBoarding = async (
   item: BoardingHouse,
   isLoading: boolean,
-  setIsLoading: (isLoading: boolean) => void  
+  setIsLoading: (isLoading: boolean) => void
 ) => {
   if (isLoading) return;
   toastLoading();

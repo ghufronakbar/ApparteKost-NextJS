@@ -38,12 +38,15 @@ const BoardingPage = () => {
   const { id } = router.query as { id: string };
 
   const fetchData = async () => {
-    const res = await getBoardingById(id, router, "admin");
-    if (res) {
-      setData(res);
-      res.pictures &&
-        res.pictures.length > 0 &&
-        setImage(res.pictures[0].picture);
+    if (router.isReady && id) {
+      console.log({ id });
+      const res = await getBoardingById(id, router, "admin");
+      if (res) {
+        setData(res);
+        res.pictures &&
+          res.pictures.length > 0 &&
+          setImage(res.pictures[0].picture);
+      }
     }
   };
 
@@ -55,7 +58,7 @@ const BoardingPage = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && id) {
       fetchData();
     }
   }, [id, router]);
