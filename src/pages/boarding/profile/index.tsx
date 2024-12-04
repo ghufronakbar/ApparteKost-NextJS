@@ -62,6 +62,7 @@ const ProfilePage = () => {
 
   const handleSetActive = async () => {
     await setActiveBoarding("id", loading, setLoading, onSuccessConfirm);
+    data && setData({ ...data, isActive: !data.isActive });
   };
 
   return (
@@ -210,7 +211,11 @@ const ProfilePage = () => {
                     </th>
                     <td className="px-6 py-3">
                       {data?.isActive !== undefined && (
-                        <select onChange={handleSetActive} disabled={loading}>
+                        <select
+                          onChange={handleSetActive}
+                          disabled={loading}
+                          value={data?.isActive ? 1 : 0}
+                        >
                           <option value={data?.isActive ? 1 : 0}>
                             {data?.isActive ? "Aktif" : "Tidak Aktif"}
                           </option>
