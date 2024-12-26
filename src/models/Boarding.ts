@@ -10,7 +10,7 @@ export interface BoardingHouse {
   district: string;
   subdistrict: string;
   location: string;
-  panoramaPicture: string | null;
+  panoramas: Panorama[];
   maxCapacity: number;
   price: number;
   isPending: boolean;
@@ -32,6 +32,13 @@ export interface Picture {
   pictureId: number;
   picture: string;
   boardingHouseId: number;
+}
+
+export interface Panorama {
+  panoramaId: number;
+  panorama: string;
+  boardingHouseId: number;
+  boardingHouse: BoardingHouse;
 }
 
 export interface Review {

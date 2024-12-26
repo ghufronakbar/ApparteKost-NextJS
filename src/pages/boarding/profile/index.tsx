@@ -4,6 +4,7 @@ import formatRupiah from "@/helper/formatRupiah";
 import { BoardingHouse } from "@/models/Boarding";
 import {
   confirmBoarding,
+  deletePanorama,
   getBoardingById,
   setActiveBoarding,
   uploadPanorama,
@@ -14,6 +15,7 @@ import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import BoardingAuthPage from "@/utils/BoardingAuthPage";
 import NavBoarding from "@/components/NavBoarding";
+import { MdDelete } from "react-icons/md";
 
 const ProfilePage = () => {
   const [data, setData] = useState<BoardingHouse>();
@@ -65,6 +67,14 @@ const ProfilePage = () => {
     data && setData({ ...data, isActive: !data.isActive });
   };
 
+  if (!data) {
+    return (
+      <div className="flex h-screen w-screens items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full min-h-screen bg-gray-50 flex">
       <NavBoarding />
@@ -100,24 +110,51 @@ const ProfilePage = () => {
               </div>
               <div className="w-full aspect-video lg:w-2/3 flex flex-col gap-2">
                 <h4 className="font-medium">Gambar Panorama (AR)</h4>
-                <Image
-                  src={
-                    panoramaPicture
-                      ? URL.createObjectURL(panoramaPicture)
-                      : data?.panoramaPicture ||
-                        data?.panoramaPicture ||
-                        DEFAULT_IMAGE
-                  }
-                  alt="Gambar Kos"
-                  width={500}
-                  height={500}
-                  className="h-60 object-cover rounded-lg"
-                />
-                {!data?.panoramaPicture && (
+                {data?.panoramas.map((picture, index) => (
+                  <div
+                    key={picture?.panoramaId}
+                    className="flex flex-row justify-between items-center w-full gap-2"
+                  >
+                    <Image
+                      src={picture.panorama}
+                      alt="Gambar Kos"
+                      width={500}
+                      height={500}
+                      className="h-60 w-[90%] lg:w-[95%] object-cover rounded-lg"
+                    />
+                    <MdDelete
+                      className="text-red-500 cursor-pointer w-[10%] lg:w-[5%] h-auto"
+                      onClick={() =>
+                        deletePanorama(
+                          picture.panoramaId,
+                          loading,
+                          setLoading,
+                          fetchData
+                        )
+                      }
+                    />
+                  </div>
+                ))}
+                {!data?.panoramas.length && !panoramaPicture && (
                   <p className="text-gray-500 text-xs">
                     Belum ada gambar panorama
                   </p>
-                )}
+                )}{" "}
+                {panoramaPicture ? (
+                  <div className="flex flex-row justify-between items-center w-full gap-2">
+                    <Image
+                      src={URL.createObjectURL(panoramaPicture)}
+                      alt="Gambar Kos"
+                      width={500}
+                      height={500}
+                      className="h-60 w-[90%] lg:w-[95%] object-cover rounded-lg"
+                    />
+                    <MdDelete
+                      className="text-red-500 cursor-pointer w-[10%] lg:w-[5%] h-auto"
+                      onClick={() => setPanoramaPicture(undefined)}
+                    />
+                  </div>
+                ) : null}
                 <div className="flex flex-row gap-2">
                   <input
                     type="file"
@@ -126,7 +163,7 @@ const ProfilePage = () => {
                     onChange={handlePanoramaChange}
                   />
                   <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                     onClick={handleSelectPanorama}
                   >
                     Pilih Gambar

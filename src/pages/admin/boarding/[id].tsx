@@ -7,27 +7,16 @@ import statusText from "@/helper/statusText";
 import { BoardingHouse } from "@/models/Boarding";
 import {
   confirmBoarding,
-  getAllBoardings,
+  deletePanorama,
   getBoardingById,
   uploadPanorama,
 } from "@/services/boarding";
 import AdminAuthPage from "@/utils/AdminAuthPage";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-
-const FIELDS = [
-  "No",
-  "",
-  "Nama Kos",
-  "Pemilik",
-  "Alamat",
-  "Rating",
-  "Status",
-  "",
-];
+import { MdDelete } from "react-icons/md";
 
 const BoardingPage = () => {
   const [data, setData] = useState<BoardingHouse>();
@@ -88,6 +77,14 @@ const BoardingPage = () => {
     );
   };
 
+  if (!data) {
+    return (
+      <div className="flex h-screen w-screens items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full min-h-screen bg-gray-50 flex">
       <NavAdmin />
@@ -123,24 +120,51 @@ const BoardingPage = () => {
               </div>
               <div className="w-full aspect-video lg:w-2/3 flex flex-col gap-2">
                 <h4 className="font-medium">Gambar Panorama (AR)</h4>
-                <Image
-                  src={
-                    panoramaPicture
-                      ? URL.createObjectURL(panoramaPicture)
-                      : data?.panoramaPicture ||
-                        data?.panoramaPicture ||
-                        DEFAULT_IMAGE
-                  }
-                  alt="Gambar Kos"
-                  width={500}
-                  height={500}
-                  className="h-60 object-cover rounded-lg"
-                />
-                {!data?.panoramaPicture && (
+                {data?.panoramas.map((picture, index) => (
+                  <div
+                    key={picture?.panoramaId}
+                    className="flex flex-row justify-between items-center w-full gap-2"
+                  >
+                    <Image
+                      src={picture.panorama}
+                      alt="Gambar Kos"
+                      width={500}
+                      height={500}
+                      className="h-60 w-[90%] lg:w-[95%] object-cover rounded-lg"
+                    />
+                    <MdDelete
+                      className="text-red-500 cursor-pointer w-[10%] lg:w-[5%] h-auto"
+                      onClick={() =>
+                        deletePanorama(
+                          picture.panoramaId,
+                          loading,
+                          setLoading,
+                          fetchData
+                        )
+                      }
+                    />
+                  </div>
+                ))}
+                {!data?.panoramas.length && !panoramaPicture && (
                   <p className="text-gray-500 text-xs">
                     Belum ada gambar panorama
                   </p>
-                )}
+                )}{" "}
+                {panoramaPicture ? (
+                  <div className="flex flex-row justify-between items-center w-full gap-2">
+                    <Image
+                      src={URL.createObjectURL(panoramaPicture)}
+                      alt="Gambar Kos"
+                      width={500}
+                      height={500}
+                      className="h-60 w-[90%] lg:w-[95%] object-cover rounded-lg"
+                    />
+                    <MdDelete
+                      className="text-red-500 cursor-pointer w-[10%] lg:w-[5%] h-auto"
+                      onClick={() => setPanoramaPicture(undefined)}
+                    />
+                  </div>
+                ) : null}
                 <div className="flex flex-row gap-2">
                   <input
                     type="file"

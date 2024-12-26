@@ -135,6 +135,31 @@ export const uploadPanorama = async (
   }
 };
 
+export const deletePanorama = async (
+  id: number,  
+  loading: boolean,
+  setLoading: (loading: boolean) => void,
+  afterSuccess?: () => void
+) => {
+  if (loading) return;
+  toastLoading();    
+  try {
+    setLoading(true);
+    const { data } = await axiosInstance.delete<ResponseSuccess<BoardingHouse>>(
+      `/boardings/${id}/panorama`,      
+    );
+    toastSuccess(data.message);
+    afterSuccess?.();
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    const err = error as ResponseFail;
+    toastError(err.response?.data.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 export const uploadOwnerPicture = async (
   file: File,
   loading: boolean,
